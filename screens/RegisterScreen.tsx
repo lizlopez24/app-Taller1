@@ -1,19 +1,14 @@
-import {
-  Alert,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert,Image,Pressable,StyleSheet,Text,TextInput,View } from "react-native";
 import React, { useState } from "react";
-import { TextInput } from "react-native-gesture-handler";
+
 
 import { db } from "../config/Config";
 import { ref, set } from "firebase/database";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../config/Config';
 
-export default function RegisterScreen() {
+
+export default function RegisterScreen({navigation}:any) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [usuario, SetUsuario] = useState("");
@@ -26,7 +21,28 @@ export default function RegisterScreen() {
     });
 
     Alert.alert("Mensaje", "Se registro tu usuario");
+
+      createUserWithEmailAndPassword(auth, correo, contrasena)
+      .then((userCredential) => {
+        // Signed up 
+        const user = userCredential.user;
+        //console.log("Registro exitoso");
+        navigation.navigate('Login')
+        
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        
+        console.log(errorCode)
+        
+        if ( errorCode=== 'auth/weak-password'){
+          Alert.alert("Error", "La contraseña debe poseer 6 caracteres")
+        }
+        
+      });
   }
+
 
   return (
     <View style={styles.container}>
