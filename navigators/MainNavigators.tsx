@@ -13,7 +13,7 @@ function MyTabs(){
         <Tab.Navigator>
             <Tab.Screen name="Juego" component={VideojuegoScreen} options={{tabBarIcon:()=>(
             <MaterialIcons name="" size={24} color={'#0ecee1'}/>
-        ),headerShown: false}}/>
+        )}}/>
             <Tab.Screen name="Puntuaciones" component={PuntuacionScreen} options={{tabBarIcon:()=>(
             <MaterialIcons name="star-border" size={24} color={'#0ecee1'}/>
         )}}/>
