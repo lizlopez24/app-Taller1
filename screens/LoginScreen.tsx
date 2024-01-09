@@ -1,4 +1,4 @@
-import { Button, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Button, Image, Pressable, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { TextInput } from 'react-native-gesture-handler'
 import { signInWithEmailAndPassword } from 'firebase/auth'
@@ -20,6 +20,30 @@ export default function LoginScreen({ navigation }: any) {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+
+        switch (errorCode) {
+            case 'auth/invalid-email':
+              Alert.alert("ERROR", "Credenciales incorrectas");
+              break;
+              case 'auth/invalid-credential':
+              Alert.alert("ERROR", "Credenciales incorrectas");
+              break;
+            case 'auth/missing-password':
+              Alert.alert("ERROR", "Ingrese la contraseña");
+              break;
+            case 'auth/wrong-password':
+              Alert.alert("ERROR", "Contraseña incorrecta");
+              break;
+              case 'auth/user-not-found':
+              Alert.alert("ERROR", "Usuario no encontrado, por favor, registrate!");
+              break;
+              case 'auth/too-many-requests':
+              Alert.alert("ERROR", "Tu cuenta ha sido temporalmente desactivada debido a los multiples intentos fallidos de inicio de sesión, vuelve a intentarlo más tarde.");
+              break;
+            default:
+              Alert.alert("ERROR");
+              break;
+          }
       });
       }
 
