@@ -51,7 +51,7 @@ export default function LoginScreen({ navigation }: any) {
         <View style={styles.container}>
             <Text style={styles.title}>Iniciar Sesión</Text>
             <Image source={{ uri: 'https://e7.pngegg.com/pngimages/858/581/png-clipart-profile-icon-user-computer-icons-system-chinese-wind-title-column-miscellaneous-service.png' }} style={styles.img} />
-            <TextInput placeholder='Ingrese su email' style={styles.input} 
+            <TextInput placeholder='Ingrese su correo electronico' style={styles.input} 
             keyboardType='email-address'
             onChangeText={(texto)=>setemail(texto)}
             value={email}/>
