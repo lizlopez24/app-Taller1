@@ -1,4 +1,4 @@
-import { Alert,Image,Pressable,StyleSheet,Text,TextInput,View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
 
 
@@ -8,7 +8,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../config/Config';
 
 
-export default function RegisterScreen({navigation}:any) {
+export default function RegisterScreen({ navigation }: any) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [usuario, SetUsuario] = useState("");
@@ -20,26 +20,43 @@ export default function RegisterScreen({navigation}:any) {
       user: usuario,
     });
 
-    Alert.alert("Mensaje", "Se registro tu usuario");
 
-      createUserWithEmailAndPassword(auth, correo, contrasena)
+    createUserWithEmailAndPassword(auth, correo, contrasena)
       .then((userCredential) => {
         // Signed up 
         const user = userCredential.user;
         //console.log("Registro exitoso");
         navigation.navigate('Login')
-        
+        setCorreo('')
+        setContrasena('')
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        
+
         console.log(errorCode)
-        
-        if ( errorCode=== 'auth/weak-password'){
-          Alert.alert("Error", "La contraseña debe poseer 6 caracteres")
+        console.log(errorMessage)
+
+        switch (errorCode) {
+          case 'auth/weak-password':
+            Alert.alert("ERROR", "Contraseña muy corta (minimo 6 caracteres)");
+            setContrasena('')
+            break;
+          case 'auth/invalid-email':
+            Alert.alert("ERROR", "Correo no valido");
+            setCorreo('')
+            break;
+          case 'auth/missing-password':
+            Alert.alert("ERROR", "Ponga una contraseña")
+            break;
+          case 'auth/missing-email':
+            Alert.alert("ERROR", "Ponga un correo")
+            break;
+          default:
+            Alert.alert("ERROR");
+            break;
         }
-        
+
       });
   }
 
@@ -56,7 +73,9 @@ export default function RegisterScreen({navigation}:any) {
       <TextInput
         placeholder="Ingrese su correo"
         onChangeText={(texto) => setCorreo(texto)}
+        keyboardType="email-address"
         style={styles.input}
+        value={correo}
       />
       <TextInput
         placeholder="Ingrese su nombre de usuario"
@@ -67,11 +86,15 @@ export default function RegisterScreen({navigation}:any) {
         placeholder="Ingrese su contraseña"
         onChangeText={(texto) => setContrasena(texto)}
         style={styles.input}
+        value={contrasena}
+        secureTextEntry={true}
       />
       <TextInput
         placeholder="Confirme su contraseña"
         onChangeText={(texto) => setContrasena(texto)}
         style={styles.input}
+        value={contrasena}
+        secureTextEntry={true}
       />
       <Pressable
         style={styles.btn}

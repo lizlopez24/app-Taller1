@@ -57,7 +57,8 @@ export default function LoginScreen({ navigation }: any) {
             value={email}/>
             <TextInput placeholder='Ingrese su contraseña' style={styles.input}
             onChangeText={(texto)=>setpassword(texto)}
-            value={password}/>
+            value={password}
+            secureTextEntry={true}/>
 
             <Pressable onPress={() => login()}
                 style={styles.btn}>
