@@ -20,7 +20,6 @@ export default function MainGameScreen() {
     const interval = setInterval(() => {
       setTimeLeft(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
     }, 1000);
-
     generateInsects();
 
     return () => clearInterval(interval);
@@ -108,16 +107,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#f8e8f9'
   },
   scoreText: {
     fontSize: 20,
-    marginBottom: 10
+    marginBottom: 10,
+    fontStyle:'italic'
   },
   timeText: {
     fontSize: 18,
-    marginBottom: 20
+    marginBottom: 20,
+    fontWeight:'bold'
   },
   insectsContainer: {
     position: 'relative',

@@ -63,7 +63,7 @@ export default function RegisterScreen({ navigation }: any) {
 
       });
     }
-  const [imagen, setImagen] = useState('');
+  const [imagen, setImagen] = useState('https://www.infobae.com/new-resizer/P0moRvtpTu7R0F34nLchAokqzqQ=/1200x900/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/OF3SZKCXHZADLOGT3V5KFAXG4E.png');
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    backgroundColor:'#f8e8f9'
   },
   title: {
     fontSize: 25,
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderColor: 'black',
     borderWidth: 1,
-    borderRadius:5
+    borderRadius:90
   },
   btnImg1: {
     width: 115,
