@@ -6,6 +6,7 @@ import PuntuacionScreen from '../screens/PuntuacionScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import { MaterialIcons } from '@expo/vector-icons';
+import BienvenidaScreen from '../screens/BienvenidaScreen';
 
 const Tab = createBottomTabNavigator();
 function MyTabs(){
@@ -24,6 +25,7 @@ const Stack=createStackNavigator();
 function MyStack(){
     return(
         <Stack.Navigator>
+            <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Registrarse" component={RegisterScreen} />
             <Stack.Screen name="Tab" component={MyTabs} />
