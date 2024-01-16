@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Image, Button, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Informacion from '../components/Informacion';
 
 interface Insect {
   id: string;
@@ -11,9 +12,11 @@ interface Insect {
 export default function MainGameScreen() {
   const navigation = useNavigation();
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(10);
   const [insects, setInsects] = useState<Insect[]>([]);
   const [animation] = useState(new Animated.Value(0));
+  const [ismodalVisible, setismodalVisible] = useState(false)
+  const [btn, setbtn] = useState(true)
   const insectImageUri = 'https://resources.bestfriends.org/sites/default/files/styles/large/public/2022-11/17_Desmond_LF_794A6656_video.jpg?itok=q4Zyy7HV';
 
   useEffect(() => {
@@ -24,12 +27,21 @@ export default function MainGameScreen() {
 
     return () => clearInterval(interval);
   }, []);
-
+  function reiniciar(){
+      setScore(0)
+    setTimeLeft(10)
+    setbtn(true)
+  }
   useEffect(() => {
     if (timeLeft === 0) {
-      console.log('Ganaste');
+      toggleModal()
+      setbtn(false)
     }
   }, [timeLeft]);
+
+  const toggleModal=()=>{
+    setismodalVisible(!ismodalVisible)
+  }
 
   const generateInsects = () => {
     const newInsects = [];
@@ -70,7 +82,7 @@ export default function MainGameScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.scoreText}>Gato robados: {score}</Text>
+      <Text style={styles.scoreText}>Gatos robados: {score}</Text>
       <Text style={styles.timeText}>Tiempo restante: {timeLeft}</Text>
       <View style={styles.insectsContainer}>
         {insects.map(insect => (
@@ -98,7 +110,13 @@ export default function MainGameScreen() {
             }
           ]}
         />
+        <Pressable onPress={() => reiniciar()}
+                style={styles.btn} disabled={btn}>
+                <Text>Reiniciar</Text>
+            </Pressable>
       </View>
+      <Informacion isVisible={ismodalVisible}
+      onClose={toggleModal} title={"Acabó el juego"} content={score}/>
     </View>
   );
 }
@@ -141,6 +159,15 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     resizeMode: 'cover'
-  }
+  },
+  btn: {
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#80d3ec',
+    marginHorizontal:145
+}
 });
 
