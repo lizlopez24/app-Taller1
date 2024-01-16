@@ -15,54 +15,66 @@ export default function RegisterScreen({ navigation }: any) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [usuario, setUsuario] = useState("");
-  
-
-  function registro(correo: string, contrasena: string, usuario: string) {
-    set(ref(db, "registros-nuevos/" + usuario), {
-      email: correo,
-      password: contrasena,
-      user: usuario,
-    });
 
 
-    createUserWithEmailAndPassword(auth, correo, contrasena)
-      .then((userCredential) => {
-        // Signed up 
-        const user = userCredential.user;
-        //console.log("Registro exitoso");
-        navigation.navigate('Login')
-        setCorreo('')
-        setContrasena('')
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        console.log(errorCode)
-        console.log(errorMessage)
-
-        switch (errorCode) {
-          case 'auth/weak-password':
-            Alert.alert("ERROR", "Contraseña muy corta (minimo 6 caracteres)");
-            setContrasena('')
-            break;
-          case 'auth/invalid-email':
-            Alert.alert("ERROR", "Correo no valido");
-            setCorreo('')
-            break;
-          case 'auth/missing-password':
-            Alert.alert("ERROR", "Ponga una contraseña")
-            break;
-          case 'auth/missing-email':
-            Alert.alert("ERROR", "Ponga un correo")
-            break;
-          default:
-            Alert.alert("ERROR");
-            break;
-        }
-
-      });
+  async function registro() {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, correo, contrasena);
+      const user = userCredential.user;
+      navigation.navigate('Login');
+      setCorreo('');
+      setContrasena('');
+      // Llama a la función guardar después de obtener el uid
+      await guardar(user.uid, correo, contrasena, usuario);
+    } catch (error) {
+      handleRegistrationError(error);
     }
+  }
+
+  async function guardar(uid: string, correo: string, contrasena: string, usuario: string) {
+    try {
+      await set(ref(db, "registros-nuevos/" + uid), {
+        email: correo,
+        password: contrasena,
+        user: usuario,
+      });
+      console.log(uid);
+    } catch (error) {
+      console.error("Error en guardar:", error);
+    }
+  }
+
+  async function compuesta() {
+    await registro();
+  }
+
+  function handleRegistrationError(error: any) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.log(errorCode);
+    console.log(errorMessage);
+
+    switch (errorCode) {
+      case 'auth/weak-password':
+        Alert.alert("ERROR", "Contraseña muy corta (mínimo 6 caracteres)");
+        setContrasena('');
+        break;
+      case 'auth/invalid-email':
+        Alert.alert("ERROR", "Correo no válido");
+        setCorreo('');
+        break;
+      case 'auth/missing-password':
+        Alert.alert("ERROR", "Ponga una contraseña");
+        break;
+      case 'auth/missing-email':
+        Alert.alert("ERROR", "Ponga un correo");
+        break;
+      default:
+        Alert.alert("ERROR");
+        break;
+    }
+  }
   const [imagen, setImagen] = useState('https://www.infobae.com/new-resizer/P0moRvtpTu7R0F34nLchAokqzqQ=/1200x900/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/OF3SZKCXHZADLOGT3V5KFAXG4E.png');
 
   const pickImage = async () => {
@@ -98,12 +110,12 @@ export default function RegisterScreen({ navigation }: any) {
   };
 
 
-  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Regístrate</Text>
-      <Image source={{ uri: imagen }}style={styles.img}/>
-      <Text style={{margin:7}}>Sube una foto para tu perfil</Text>
+      <Image source={{ uri: imagen }} style={styles.img} />
+      <Text style={{ margin: 7 }}>Sube una foto para tu perfil</Text>
       <Pressable
         style={styles.btnImg1}
         onPress={() => pickImage()}>
@@ -142,7 +154,7 @@ export default function RegisterScreen({ navigation }: any) {
       />
       <Pressable
         style={styles.btn}
-        onPress={() => registro(correo, contrasena, usuario)}
+        onPress={() => compuesta()}
       >
         <Text>Registrar</Text>
       </Pressable>
@@ -154,7 +166,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor:'#f8e8f9'
+    backgroundColor: '#f8e8f9'
   },
   title: {
     fontSize: 25,
@@ -185,12 +197,12 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderColor: 'black',
     borderWidth: 1,
-    borderRadius:90
+    borderRadius: 90
   },
   btnImg1: {
     width: 115,
     height: 40,
-    alignItems: 'center', 
+    alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
     backgroundColor: "#80d3ec",
@@ -200,7 +212,7 @@ const styles = StyleSheet.create({
   btnImg2: {
     width: 110,
     height: 40,
-    alignItems: 'center', 
+    alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: "#80d3ec",
     borderRadius: 4,

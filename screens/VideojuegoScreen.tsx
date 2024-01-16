@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Image, Button, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Image, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Informacion from '../components/Informacion';
+import { get, ref, set } from 'firebase/database';
+import { auth, db } from '../config/Config';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface Insect {
   id: string;
@@ -9,8 +12,7 @@ interface Insect {
   y: number;
 }
 
-export default function MainGameScreen() {
-  const navigation = useNavigation();
+export default function MainGameScreen({ navigation }: any) {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [insects, setInsects] = useState<Insect[]>([]);
@@ -18,6 +20,7 @@ export default function MainGameScreen() {
   const [ismodalVisible, setismodalVisible] = useState(false)
   const [btn, setbtn] = useState(true)
   const insectImageUri = 'https://resources.bestfriends.org/sites/default/files/styles/large/public/2022-11/17_Desmond_LF_794A6656_video.jpg?itok=q4Zyy7HV';
+  const [usuario, setUsuario] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,21 +28,50 @@ export default function MainGameScreen() {
     }, 1000);
     generateInsects();
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (timeLeft === 0) {
+        registro(score);
+        navigation.navigate('Puntuaciones')
+      }
+    }
+  }, [timeLeft, score]);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setUsuario(uid);
+      }
+    });
   }, []);
-  function reiniciar(){
-      setScore(0)
+
+  const registro = async (score: number) => {
+    if (usuario) {
+      const userRef = ref(db, "registros-nuevos/" + usuario);
+      try {
+        const userSnapshot = await get(userRef);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
+          const newScore = userData.score ? userData.score + score : score;
+          // Actualiza solo el puntaje dentro de los datos existentes
+          set(ref(db, "registros-nuevos/" + usuario + "/score"), newScore);
+        } else {
+          console.error("Usuario no encontrado en la base de datos");
+        }
+      } catch (error) {
+        console.error("Error al obtener datos del usuario:", error);
+      }
+    }
+  };
+
+  function reiniciar() {
+    setScore(0)
     setTimeLeft(10)
     setbtn(true)
   }
-  useEffect(() => {
-    if (timeLeft === 0) {
-      toggleModal()
-      setbtn(false)
-    }
-  }, [timeLeft]);
 
-  const toggleModal=()=>{
+  const toggleModal = () => {
     setismodalVisible(!ismodalVisible)
   }
 
@@ -110,13 +142,11 @@ export default function MainGameScreen() {
             }
           ]}
         />
-        <Pressable onPress={() => reiniciar()}
-                style={styles.btn} disabled={btn}>
-                <Text>Reiniciar</Text>
-            </Pressable>
+        <Pressable onPress={() => reiniciar()} style={styles.btn} disabled={btn}>
+          <Text>Reiniciar</Text>
+        </Pressable>
       </View>
-      <Informacion isVisible={ismodalVisible}
-      onClose={toggleModal} title={"Acabó el juego"} content={score}/>
+      <Informacion isVisible={ismodalVisible} onClose={toggleModal} title={"Acabó el juego"} content={score} />
     </View>
   );
 }
@@ -130,12 +160,12 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 20,
     marginBottom: 10,
-    fontStyle:'italic'
+    fontStyle: 'italic'
   },
   timeText: {
     fontSize: 18,
     marginBottom: 20,
-    fontWeight:'bold'
+    fontWeight: 'bold'
   },
   insectsContainer: {
     position: 'relative',
@@ -167,7 +197,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     elevation: 3,
     backgroundColor: '#80d3ec',
-    marginHorizontal:145
-}
+    marginHorizontal: 145
+  }
 });
-
