@@ -5,10 +5,13 @@ import * as ImagePicker from "expo-image-picker";
 //Firebase
 import { db } from "../config/Config";
 import { ref, set } from "firebase/database";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth ,createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../config/Config';
-import { getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../config/Config";
+
+
+
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(true)
 
 
 export default function RegisterScreen({ navigation }: any) {
@@ -109,8 +112,7 @@ export default function RegisterScreen({ navigation }: any) {
     }
   };
 
-
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Regístrate</Text>
@@ -154,7 +156,8 @@ export default function RegisterScreen({ navigation }: any) {
       />
       <Pressable
         style={styles.btn}
-        onPress={() => compuesta()}
+        onPress={() => compuesta()
+          }
       >
         <Text>Registrar</Text>
       </Pressable>
