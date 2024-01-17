@@ -4,6 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from 'firebase/database';
 import { getStorage } from "firebase/storage";
 
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCYMNn2v2FSYPH0VO_k75DK_Nco1YiQzeg",
@@ -19,7 +20,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const db = getDatabase(app)
+export const storage = getStorage(app)
+
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
-export const storage = getStorage(app);
