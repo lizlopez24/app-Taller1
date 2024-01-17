@@ -6,6 +6,7 @@ import PuntuacionScreen from '../screens/PuntuacionScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import { MaterialIcons } from '@expo/vector-icons';
+import PerfilScreen from '../screens/PerfilScreen';
 import BienvenidaScreen from '../screens/BienvenidaScreen';
 
 const Tab = createBottomTabNavigator();
@@ -17,6 +18,9 @@ function MyTabs(){
         )}}/>
             <Tab.Screen name="Puntuaciones" component={PuntuacionScreen} options={{tabBarIcon:()=>(
             <MaterialIcons name="star-border" size={24} color={'#0ecee1'}/>
+        )}}/>
+            <Tab.Screen name='Perfil' component={PerfilScreen} options={{tabBarIcon:()=>(
+            <MaterialIcons name="account-circle" size={24} color={'#0ecee1'}/>
         )}}/>
         </Tab.Navigator>
     )
