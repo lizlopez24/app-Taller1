@@ -19,6 +19,9 @@ import { auth } from '../config/Config';
 import { uploadBytes, getDownloadURL } from "firebase/storage";
 import { set } from "firebase/database";
 
+import { LogBox } from "react-native"
+LogBox.ignoreAllLogs(true)
+
 export default function RegisterScreen({ navigation }: any) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
