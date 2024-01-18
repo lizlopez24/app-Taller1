@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Image, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Image, Pressable, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Informacion from '../components/Informacion';
 import { get, ref, set } from 'firebase/database';
@@ -17,7 +17,6 @@ export default function MainGameScreen({ navigation }: any) {
   const [timeLeft, setTimeLeft] = useState(10);
   const [insects, setInsects] = useState<Insect[]>([]);
   const [animation] = useState(new Animated.Value(0));
-  const [ismodalVisible, setismodalVisible] = useState(false)
   const [btn, setbtn] = useState(true)
   const insectImageUri = 'https://resources.bestfriends.org/sites/default/files/styles/large/public/2022-11/17_Desmond_LF_794A6656_video.jpg?itok=q4Zyy7HV';
   const [usuario, setUsuario] = useState("");
@@ -30,12 +29,14 @@ export default function MainGameScreen({ navigation }: any) {
 
     return () => {
       clearInterval(interval);
-      if (timeLeft === 0) {
+      if (timeLeft === 1) {
+        setbtn(false)
         registro(score);
         navigation.navigate('Puntuaciones')
       }
+      
     }
-  }, [timeLeft, score]);
+  }, [timeLeft]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -65,15 +66,6 @@ export default function MainGameScreen({ navigation }: any) {
     }
   };
 
-  function reiniciar() {
-    setScore(0)
-    setTimeLeft(10)
-    setbtn(true)
-  }
-
-  const toggleModal = () => {
-    setismodalVisible(!ismodalVisible)
-  }
 
   const generateInsects = () => {
     const newInsects = [];
@@ -100,22 +92,41 @@ export default function MainGameScreen({ navigation }: any) {
   };
 
   const captureInsect = (insectId: string) => {
-    setScore(prevScore => prevScore + 1);
-    moveInsect(insectId);
 
-    Animated.timing(animation, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true
-    }).start(() => {
-      animation.setValue(0);
-    });
+    if (timeLeft !== 0) {
+      setScore(prevScore => prevScore + 1);
+      moveInsect(insectId);
+
+      Animated.timing(animation, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true
+      }).start(() => {
+        animation.setValue(0);
+      });
+    }
   };
+
+  function reiniciar(){
+    setScore(0)
+    setTimeLeft(10)
+    setbtn(true)
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.scoreText}>Gatos robados: {score}</Text>
       <Text style={styles.timeText}>Tiempo restante: {timeLeft}</Text>
+      <View>
+        { !btn &&
+        (
+          <Pressable onPress={()=>reiniciar()} style={styles.btn}>
+          <Text>Reiniciar</Text>
+        </Pressable>
+        )
+        }
+      </View>
+
       <View style={styles.insectsContainer}>
         {insects.map(insect => (
           <TouchableOpacity
@@ -142,11 +153,7 @@ export default function MainGameScreen({ navigation }: any) {
             }
           ]}
         />
-        <Pressable onPress={() => reiniciar()} style={styles.btn} disabled={btn}>
-          <Text>Reiniciar</Text>
-        </Pressable>
       </View>
-      <Informacion isVisible={ismodalVisible} onClose={toggleModal} title={"Acabó el juego"} content={score} />
     </View>
   );
 }
