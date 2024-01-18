@@ -32,6 +32,7 @@ export default function MainGameScreen({ navigation }: any) {
       if (timeLeft === 1) {
         setbtn(false)
         registro(score);
+        Alert.alert("Se acabó el tiempo","¡Sigue así! Puedes acumular más puntos. Revisa tu puntuación actual")
         navigation.navigate('Puntuaciones')
       }
       
