@@ -11,16 +11,12 @@ import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 
 //Firebase
-import { db } from "../config/Config";
 import { ref, set } from "firebase/database";
-import { getAuth ,createUserWithEmailAndPassword } from "firebase/auth";
 import { db, storage } from "../config/Config";
 import { ref as refFire} from "firebase/storage";
-import { ref} from "firebase/database";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../config/Config';
 import { getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../config/Config";
 
 import { LogBox } from "react-native"
 LogBox.ignoreAllLogs(true)
@@ -198,7 +194,7 @@ async function subirImagen(nombre: string) {
       />
       <Pressable
         style={styles.btn}
-        onPress={() => compuesta()}
+        onPress={() => registro()}
       >
         <Text>Registrar</Text>
       </Pressable>
