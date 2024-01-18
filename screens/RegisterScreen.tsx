@@ -13,12 +13,11 @@ import * as ImagePicker from "expo-image-picker";
 //Firebase
 import { db } from "../config/Config";
 import { ref, set } from "firebase/database";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/Config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../config/Config';
+import { getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../config/Config";
 
-import { LogBox } from "react-native";
-import SubirImg from "../components/SubirImg";
-LogBox.ignoreAllLogs(true);
 
 export default function RegisterScreen({ navigation }: any) {
   const [correo, setCorreo] = useState("");
@@ -131,6 +130,8 @@ export default function RegisterScreen({ navigation }: any) {
     }
   };
 
+
+
   return (
     <View style={styles.container}>
       <View>
@@ -174,10 +175,7 @@ export default function RegisterScreen({ navigation }: any) {
       />
       <Pressable
         style={styles.btn}
-        onPress={() => {
-          compuesta();
-          SubirImg();
-        }}
+        onPress={() => compuesta()}
       >
         <Text>Registrar</Text>
       </Pressable>
