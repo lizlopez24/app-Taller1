@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, FlatList } from 'react-native'
+import { StyleSheet, Text, View, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { onAuthStateChanged } from "firebase/auth";
 import { ref, get } from "firebase/database";
@@ -9,6 +9,8 @@ export default function PerfilScreen() {
 
     const [id, setid] = useState('')
     const [usuario, setUsuario] = useState<{ email: string, user: string } | null>(null);
+    const [foto, setfoto] = useState<{ picture: string } | null>(null);
+
     let date = new Date()
 
     useEffect(() => {
@@ -18,7 +20,7 @@ export default function PerfilScreen() {
                 console.log("Datos: ", uid)
                 console.log(date)
                 setid(uid);
-                
+
                 // Obtenemos el usuario específico
                 const userRef = ref(db, 'registros-nuevos/' + uid);
                 get(userRef).then((snapshot) => {
@@ -28,23 +30,26 @@ export default function PerfilScreen() {
                             email: userData.email,
                             user: userData.user
                         });
-                        console.log(userData)
+                        setfoto({
+                            picture: userData.picture
+                        })
                     } else {
                         console.log("No se encontraron datos para el usuario");
                     }
                 }).catch((error) => {
                     console.error("Error al obtener datos:", error);
                 });
-                
+
             } else {
                 setid('')
             }
         });
     }, [])
 
+
     return (
         <View style={styles.container}>
-            <Image source={{ uri: 'https://e7.pngegg.com/pngimages/858/581/png-clipart-profile-icon-user-computer-icons-system-chinese-wind-title-column-miscellaneous-service.png' }} style={styles.img} />
+            <Image source={{ uri: foto?.picture }} style={styles.img} />
             {usuario && (
                 <View>
                     <Text style={{ fontWeight: 'bold', fontSize: 28 }}>{usuario.user}</Text>
@@ -60,7 +65,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor:'#f8e8f9'
+        backgroundColor: '#f8e8f9'
     },
     img: {
         width: 200,
