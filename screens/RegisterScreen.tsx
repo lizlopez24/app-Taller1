@@ -1,32 +1,41 @@
-import { Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 
 //Firebase
 import { db } from "../config/Config";
 import { ref, set } from "firebase/database";
-import { getAuth ,createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../config/Config';
-
-
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/Config";
 
 import { LogBox } from "react-native";
-LogBox.ignoreAllLogs(true)
-
+import SubirImg from "../components/SubirImg";
+LogBox.ignoreAllLogs(true);
 
 export default function RegisterScreen({ navigation }: any) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [usuario, setUsuario] = useState("");
 
-
   async function registro() {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, correo, contrasena);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        correo,
+        contrasena
+      );
       const user = userCredential.user;
-      navigation.navigate('Login');
-      setCorreo('');
-      setContrasena('');
+      navigation.navigate("Login");
+      setCorreo("");
+      setContrasena("");
       // Llama a la función guardar después de obtener el uid
       await guardar(user.uid, correo, contrasena, usuario);
     } catch (error) {
@@ -34,7 +43,12 @@ export default function RegisterScreen({ navigation }: any) {
     }
   }
 
-  async function guardar(uid: string, correo: string, contrasena: string, usuario: string) {
+  async function guardar(
+    uid: string,
+    correo: string,
+    contrasena: string,
+    usuario: string
+  ) {
     try {
       await set(ref(db, "registros-nuevos/" + uid), {
         email: correo,
@@ -59,26 +73,31 @@ export default function RegisterScreen({ navigation }: any) {
     console.log(errorMessage);
 
     switch (errorCode) {
-      case 'auth/weak-password':
+      case "auth/weak-password":
         Alert.alert("ERROR", "Contraseña muy corta (mínimo 6 caracteres)");
-        setContrasena('');
+        setContrasena("");
         break;
-      case 'auth/invalid-email':
+      case "auth/invalid-email":
         Alert.alert("ERROR", "Correo no válido");
-        setCorreo('');
+        setCorreo("");
         break;
-      case 'auth/missing-password':
+      case "auth/missing-password":
         Alert.alert("ERROR", "Ponga una contraseña");
         break;
-      case 'auth/missing-email':
+      case "auth/missing-email":
         Alert.alert("ERROR", "Ponga un correo");
+        break;
+      case "auth/email-already-in-use":
+        Alert.alert("ERROR", "Correo ya registrado");
         break;
       default:
         Alert.alert("ERROR");
         break;
     }
   }
-  const [imagen, setImagen] = useState('https://www.infobae.com/new-resizer/P0moRvtpTu7R0F34nLchAokqzqQ=/1200x900/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/OF3SZKCXHZADLOGT3V5KFAXG4E.png');
+  const [imagen, setImagen] = useState(
+    "https://www.infobae.com/new-resizer/P0moRvtpTu7R0F34nLchAokqzqQ=/1200x900/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/OF3SZKCXHZADLOGT3V5KFAXG4E.png"
+  );
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -112,20 +131,19 @@ export default function RegisterScreen({ navigation }: any) {
     }
   };
 
-  
   return (
     <View style={styles.container}>
+      <View>
+      <SubirImg/>
+      </View>
+      <Text></Text>
       <Text style={styles.title}>Regístrate</Text>
       <Image source={{ uri: imagen }} style={styles.img} />
       <Text style={{ margin: 7 }}>Sube una foto para tu perfil</Text>
-      <Pressable
-        style={styles.btnImg1}
-        onPress={() => pickImage()}>
+      <Pressable style={styles.btnImg1} onPress={() => pickImage()}>
         <Text>Desde la galería</Text>
       </Pressable>
-      <Pressable
-        style={styles.btnImg2}
-        onPress={() => takeImage()}>
+      <Pressable style={styles.btnImg2} onPress={() => takeImage()}>
         <Text>Usar cámara</Text>
       </Pressable>
       <TextInput
@@ -156,8 +174,10 @@ export default function RegisterScreen({ navigation }: any) {
       />
       <Pressable
         style={styles.btn}
-        onPress={() => compuesta()
-          }
+        onPress={() => {
+          compuesta();
+          SubirImg();
+        }}
       >
         <Text>Registrar</Text>
       </Pressable>
@@ -169,7 +189,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: '#f8e8f9'
+    backgroundColor: "#f8e8f9",
   },
   title: {
     fontSize: 25,
@@ -198,28 +218,28 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     resizeMode: "contain",
-    borderColor: 'black',
+    borderColor: "black",
     borderWidth: 1,
-    borderRadius: 90
+    borderRadius: 90,
   },
   btnImg1: {
     width: 115,
     height: 40,
-    alignItems: 'center',
-    alignContent: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "center",
     backgroundColor: "#80d3ec",
     borderRadius: 4,
-    marginLeft: -150
+    marginLeft: -150,
   },
   btnImg2: {
     width: 110,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#80d3ec",
     borderRadius: 4,
     marginLeft: 150,
-    marginTop: -40
-  }
+    marginTop: -40,
+  },
 });
