@@ -11,18 +11,21 @@ import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 
 //Firebase
-import { db } from "../config/Config";
-import { ref, set } from "firebase/database";
+import { db, storage } from "../config/Config";
+import { ref as refFire} from "firebase/storage";
+import { ref} from "firebase/database";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../config/Config';
-import { getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../config/Config";
-
+import { uploadBytes, getDownloadURL } from "firebase/storage";
+import { set } from "firebase/database";
 
 export default function RegisterScreen({ navigation }: any) {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [usuario, setUsuario] = useState("");
+  const [imagen, setImagen] = useState(
+    "https://www.infobae.com/new-resizer/P0moRvtpTu7R0F34nLchAokqzqQ=/1200x900/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/OF3SZKCXHZADLOGT3V5KFAXG4E.png"
+  );
 
   async function registro() {
     try {
@@ -37,6 +40,7 @@ export default function RegisterScreen({ navigation }: any) {
       setContrasena("");
       // Llama a la función guardar después de obtener el uid
       await guardar(user.uid, correo, contrasena, usuario);
+      subirImagen(user.uid);
     } catch (error) {
       handleRegistrationError(error);
     }
@@ -58,10 +62,6 @@ export default function RegisterScreen({ navigation }: any) {
     } catch (error) {
       console.error("Error en guardar:", error);
     }
-  }
-
-  async function compuesta() {
-    await registro();
   }
 
   function handleRegistrationError(error: any) {
@@ -94,49 +94,64 @@ export default function RegisterScreen({ navigation }: any) {
         break;
     }
   }
-  const [imagen, setImagen] = useState(
-    "https://www.infobae.com/new-resizer/P0moRvtpTu7R0F34nLchAokqzqQ=/1200x900/filters:format(webp):quality(85)/cloudfront-us-east-1.images.arcpublishing.com/infobae/OF3SZKCXHZADLOGT3V5KFAXG4E.png"
-  );
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
 
-    console.log(result);
-
-    if (!result.canceled) {
-      setImagen(result.assets[0].uri);
+async function subirImagen(nombre: string) {
+      const storageRef = refFire(storage, "usuarios/" + nombre);
+  
+      try {
+        const response = await fetch(imagen);
+        const blob = await response.blob();
+  
+        await uploadBytes(storageRef, blob, {
+          contentType: "image/jpg",
+        });
+  
+        console.log("La imagen se subió con éxito");
+        Alert.alert("Mensaje", "Imagen subida con exito");
+  
+        // Obtiene la URL de la imagen
+        const imageURL = await getDownloadURL(storageRef);
+        console.log("URL de desacarga de la imagen", imageURL);
+      } catch (error) {
+        console.error(error);
+      }
     }
-  };
-
-  const takeImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImagen(result.assets[0].uri);
-    }
-  };
-
-
+  
+    const pickImage = async () => {
+      // No permissions request is necessary for launching the image library
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+  
+      console.log(result);
+  
+      if (!result.canceled) {
+        setImagen(result.assets[0].uri);
+      }
+    };
+  
+    const takeImage = async () => {
+      // No permissions request is necessary for launching the image library
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+  
+      console.log(result);
+  
+      if (!result.canceled) {
+        setImagen(result.assets[0].uri);
+      }
+    };
 
   return (
     <View style={styles.container}>
-      <View>
-      <SubirImg/>
-      </View>
       <Text></Text>
       <Text style={styles.title}>Regístrate</Text>
       <Image source={{ uri: imagen }} style={styles.img} />
@@ -175,7 +190,7 @@ export default function RegisterScreen({ navigation }: any) {
       />
       <Pressable
         style={styles.btn}
-        onPress={() => compuesta()}
+        onPress={() => registro()}
       >
         <Text>Registrar</Text>
       </Pressable>
