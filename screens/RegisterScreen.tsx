@@ -111,7 +111,7 @@ async function subirImagen(nombre: string) {
         });
   
         console.log("La imagen se subió con éxito");
-        Alert.alert("Mensaje", "Imagen subida con exito");
+        
   
         // Obtiene la URL de la imagen
         const imageURL = await getDownloadURL(storageRef);
