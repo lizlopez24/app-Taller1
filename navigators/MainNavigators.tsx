@@ -9,6 +9,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import PerfilScreen from '../screens/PerfilScreen';
 import BienvenidaScreen from '../screens/BienvenidaScreen';
 
+
 const Tab = createBottomTabNavigator();
 function MyTabs(){
     return(
