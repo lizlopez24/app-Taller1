@@ -71,6 +71,7 @@ export default function PerfilScreen({ navigation }: any) {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>MI PERFIL</Text>
             <View style={{ alignItems: 'center', margin: 40 }}>
                 {foto && (<Image source={{ uri: foto.picture }} style={styles.img} />)}
                 {usuario && (
@@ -129,8 +130,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 30,
         marginTop: 60,
-        marginBottom: 30
-
+        marginBottom: 30,
+        fontWeight: 'bold'
     },
     input: {
         width: 275,
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: '80%',
         height: 35,
-        backgroundColor: '#b8b8ff',
+        backgroundColor: '#80d3ec',
         borderColor: '#5cbdbb',
         justifyContent: 'center',
         alignItems: 'center',

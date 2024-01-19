@@ -59,8 +59,8 @@ export default function PuntuacionScreen() {
                 renderItem={({ item }: { item: usuario }) => (
                     <View>
                         <View style={styles.onerow}>
-                            <Text style={{marginRight:50, fontSize:16}}>user: {item.user}</Text>
-                            <Text style={{fontSize:16}}>{item.score}</Text>
+                            <Text style={{marginRight:50, fontSize:16}}>{item.user}</Text>
+                            <Text style={{fontSize:16, fontWeight: 'bold'}}>{item.score}</Text>
                         </View>
                         <Text></Text>
                     </View>

@@ -36,13 +36,14 @@ export default function RegisterScreen({ navigation }: any) {
         correo,
         contrasena
       );
-      const user = userCredential.user;
-      navigation.navigate("Login");
+      const user = userCredential.user;      
       setCorreo("");
       setContrasena("");
       // Llama a la función guardar después de obtener el uid
       await guardar(user.uid, correo, contrasena, usuario);
       subirImagen(user.uid);
+      Alert.alert("Registro Exitoso","Ya puedes iniciar sesión")
+      navigation.navigate("Login");
     } catch (error) {
       handleRegistrationError(error);
     }
