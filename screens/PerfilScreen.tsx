@@ -15,8 +15,6 @@ export default function PerfilScreen({ navigation }: any) {
     const [usuario, setUsuario] = useState<{ email: string, user: string } | null>(null);
     const [foto, setfoto] = useState<{ picture: string } | null>(null);
 
-    let date = new Date()
-
     const noeditando = () => {
         setEditando(false)
         setUpdate(true)
@@ -33,7 +31,6 @@ export default function PerfilScreen({ navigation }: any) {
             if (user) {
                 const uid = user.uid;
                 setid(uid);
-
                 // Obtenemos el usuario específico
                 const userRef = ref(db, 'registros-nuevos/' + uid);
                 get(userRef).then((snapshot) => {
@@ -64,10 +61,9 @@ export default function PerfilScreen({ navigation }: any) {
         signOut(auth).then(() => {
             navigation.navigate('Bienvenida')
         }).catch((error) => {
-            // An error happened.
+            console.log(error)
         });
     }
-
 
     return (
         <View style={styles.container}>
@@ -78,15 +74,15 @@ export default function PerfilScreen({ navigation }: any) {
                     <View style={{ alignItems: 'center', margin: 12, flexDirection: 'row' }}>
                         {editando ? (
                             <TextInput
-                                style={{ fontWeight: 'bold', fontSize: 28, marginRight: 12 }}
+                                style={styles.txt}
                                 placeholder={usuario.user}
                                 onChangeText={(texto: any) => setUsuarioNuevo(texto)}
                             />) :
-                            (<Text style={{ fontWeight: 'bold', fontSize: 28, marginRight: 12 }}>{usuario.user}</Text>
+                            (<Text style={styles.txt}>{usuario.user}</Text>
                             )}
                         <TouchableOpacity
                             onPress={editando ? noeditando : sieditando}
-                            style={{ borderRadius: 10, borderColor: '#000', borderWidth: 1 }}>
+                            style={styles.edit}>
                             <MaterialIcons name={editando ? 'save' : 'create'} size={26} color={'#000'} />
                         </TouchableOpacity>
                     </View>
@@ -125,7 +121,9 @@ const styles = StyleSheet.create({
         borderRadius: 100
     },
     txt: {
-        fontWeight: 'bold'
+        fontWeight: 'bold', 
+        fontSize: 28, 
+        marginRight: 12
     },
     title: {
         fontSize: 30,
@@ -161,5 +159,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         bottom: 60
+    },
+    edit: {
+        borderRadius: 10, 
+        borderColor: '#000', 
+        borderWidth: 1
     }
 })
