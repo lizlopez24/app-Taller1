@@ -13,7 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 //Firebase
 import { ref, set } from "firebase/database";
 import { db, storage } from "../config/Config";
-import { ref as refFire} from "firebase/storage";
+import { ref as refFire } from "firebase/storage";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../config/Config';
 import { getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -36,13 +36,14 @@ export default function RegisterScreen({ navigation }: any) {
         correo,
         contrasena
       );
-      const user = userCredential.user;
-      navigation.navigate("Login");
+      const user = userCredential.user;      
       setCorreo("");
       setContrasena("");
       // Llama a la función guardar después de obtener el uid
       await guardar(user.uid, correo, contrasena, usuario);
       subirImagen(user.uid);
+      Alert.alert("Registro Exitoso","Ya puedes iniciar sesión")
+      navigation.navigate("Login");
     } catch (error) {
       handleRegistrationError(error);
     }
@@ -98,62 +99,67 @@ export default function RegisterScreen({ navigation }: any) {
   }
 
 
-async function subirImagen(nombre: string) {
-      const storageRef = refFire(storage, "usuarios/" + nombre);
-  
-      try {
-        const response = await fetch(imagen);
-        const blob = await response.blob();
-  
-        await uploadBytes(storageRef, blob, {
-          contentType: "image/jpg",
-        });
-  
-        console.log("La imagen se subió con éxito");
-        
-  
-        // Obtiene la URL de la imagen
-        const imageURL = await getDownloadURL(storageRef);
-        console.log("URL de desacarga de la imagen", imageURL);
-      } catch (error) {
-        console.error(error);
-      }
+  async function subirImagen(nombre: string) {
+    const storageRef = refFire(storage, "usuarios/" + nombre);
+
+    try {
+      const response = await fetch(imagen);
+      const blob = await response.blob();
+
+      await uploadBytes(storageRef, blob, {
+        contentType: "image/jpg",
+      });
+
+      console.log("La imagen se subió con éxito");
+    } catch (error) {
+      console.error(error);
     }
-  
-    const pickImage = async () => {
-      // No permissions request is necessary for launching the image library
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.canceled) {
-        setImagen(result.assets[0].uri);
-      }
-    };
-  
-    const takeImage = async () => {
-      // No permissions request is necessary for launching the image library
-      let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.canceled) {
-        setImagen(result.assets[0].uri);
-      }
-    };
 
+    try {
+      console.log("entra")
+      const imageURL = await getDownloadURL(storageRef);
+      console.log("empieza")
+      set(ref(db, "registros-nuevos/" + nombre + "/picture"), imageURL);
+      console.log("termina", imageURL)
+    } catch (error) {
+      console.error(error);
+    }
+    
+  }
 
+  
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
 
+    console.log(result);
+
+    if (!result.canceled) {
+      setImagen(result.assets[0].uri);
+    }
+  };
+  
+  const takeImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    
+    console.log(result);
+
+    if (!result.canceled) {
+      setImagen(result.assets[0].uri);
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <Text></Text>
