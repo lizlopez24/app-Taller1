@@ -13,7 +13,7 @@ import BienvenidaScreen from '../screens/BienvenidaScreen';
 const Tab = createBottomTabNavigator();
 function MyTabs(){
     return(
-        <Tab.Navigator>
+        <Tab.Navigator screenOptions={{tabBarHideOnKeyboard: true}}>
             <Tab.Screen name="Juego" component={VideojuegoScreen} options={{tabBarIcon:()=>(
             <MaterialIcons name="pets" size={24} color={'#0ecee1'}/>
         )}}/>
@@ -33,7 +33,7 @@ function MyStack(){
             <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Registrarse" component={RegisterScreen} />
-            <Stack.Screen name="Tab" component={MyTabs} />
+            <Stack.Screen name="Tab" component={MyTabs} options={{headerShown:false}} />
         </Stack.Navigator>
     )
 }
