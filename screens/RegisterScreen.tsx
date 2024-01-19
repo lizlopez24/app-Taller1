@@ -43,7 +43,6 @@ export default function RegisterScreen({ navigation }: any) {
       // Llama a la función guardar después de obtener el uid
       await guardar(user.uid, correo, contrasena, usuario);
       subirImagen(user.uid);
-      await url;
     } catch (error) {
       handleRegistrationError(error);
     }
@@ -159,13 +158,6 @@ export default function RegisterScreen({ navigation }: any) {
       setImagen(result.assets[0].uri);
     }
   };
-  
-  async function url(nombre: string) {
-    const storageRef = refFire(storage, "usuarios/" + nombre);
-    const imageURL = getDownloadURL(storageRef);
-    console.log("entra", imageURL);
-    set(ref(db, "registros-nuevos/" + usuario + "/score"), imageURL);
-  }
   
   return (
     <View style={styles.container}>
